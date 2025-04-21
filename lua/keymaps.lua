@@ -1,3 +1,7 @@
+vim.keymap.set('n', '<leader>n', vim.cmd.Ex, { desc = 'Open netrw' })
+vim.keymap.set('n', '<leader>g+', '<cmd>!git add %<CR>', { desc = 'git stage file' })
+vim.keymap.set('n', '<leader>g-', '<cmd>!git restore --staged %<CR>', { desc = 'git unstage file' })
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 

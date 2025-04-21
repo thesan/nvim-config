@@ -1,4 +1,15 @@
--- [[ Setting options ]]
+-- vim.g.netrw_banner = 0 -- remove help banner BUG
+vim.g.netrw_liststyle = 3 -- tree view style as default view
+vim.g.netrw_bufsettings = 'noma nomod nu rnu nobl nowrap ro'
+
+-- Indentation
+vim.opt.autoindent = true -- indent a new line the same amount as the line just typed
+vim.opt.expandtab = true -- converts tabs to white space
+vim.opt.tabstop = 2 -- number of columns occupied by a tab
+vim.opt.softtabstop = 2 -- see multiple spaces as tabstops so <BS> does the right thing
+vim.opt.shiftwidth = 2 -- width for autoindents
+
+-- [[ Kickstart options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
@@ -7,7 +18,7 @@
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -50,7 +61,7 @@ vim.opt.splitbelow = true
 --  See `:help 'list'`
 --  and `:help 'listchars'`
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣', space = '·' }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'

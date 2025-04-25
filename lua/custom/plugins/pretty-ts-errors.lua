@@ -2,7 +2,7 @@ return {
   {
     'youyoumu/pretty-ts-errors.nvim',
     opts = {
-      -- your configuration options
+      executable = 'npx pretty-ts-errors-markdown',
     },
     config = function()
       -- Show error under cursor

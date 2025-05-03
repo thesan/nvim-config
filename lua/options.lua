@@ -1,5 +1,5 @@
--- vim.g.netrw_banner = 0 -- remove help banner BUG
-vim.g.netrw_liststyle = 3 -- tree view style as default view
+-- vim.g.netrw_banner = 0 -- remove help banner BUG: https://github.com/neovim/neovim/issues/23650
+vim.g.netrw_liststyle = 1 -- tree view style as default view
 vim.g.netrw_bufsettings = 'noma nomod nu rnu nobl nowrap ro'
 
 -- Indentation

@@ -16,7 +16,7 @@ return {
     'iberianpig/tig-explorer.vim',
     dependencies = { 'rbgrouleff/bclose.vim' },
     config = function()
-      vim.keymap.set('n', '<Leader>gs', vim.cmd.TigStatus, { desc = '[G]it [S]tatus' })
+      -- vim.keymap.set('n', '<Leader>gs', vim.cmd.TigStatus, { desc = '[G]it [S]tatus' })
       vim.keymap.set('n', '<Leader>gh', vim.cmd.TigOpenCurrentFile, { desc = '[G]it [H]istory' })
       vim.keymap.set('n', '<Leader>gg', vim.cmd.TigGrep, { desc = 'TigGrep' })
       vim.keymap.set('n', '<Leader>gr', vim.cmd.TigGrepResume, { desc = 'TigGrepResume' })

@@ -16,16 +16,20 @@ return {
     'iberianpig/tig-explorer.vim',
     dependencies = { 'rbgrouleff/bclose.vim' },
     config = function()
-      vim.keymap.set('n', '<Leader>gs', vim.cmd.TigStatus, { desc = '[G]it [S]tatus' })
-      vim.keymap.set('n', '<Leader>gh', vim.cmd.TigOpenCurrentFile, { desc = '[G]it [H]istory' })
-      vim.keymap.set('n', '<Leader>gg', vim.cmd.TigGrep, { desc = 'TigGrep' })
-      vim.keymap.set('n', '<Leader>gr', vim.cmd.TigGrepResume, { desc = 'TigGrepResume' })
-      vim.keymap.set('n', '<Leader>gb', vim.cmd.TigBlame, { desc = '[G]it [B]lame' })
+      local map = function(keys, args, desc)
+        vim.keymap.set('n', keys, '<cmd>Tig' .. ' ' .. args .. ' <CR>', { desc = desc })
+      end
 
-      -- Log graphs
-      vim.keymap.set('n', '<Leader>glc', '<cmd>Tig --first-parent<CR>', { desc = '[G]it [L]og [C]urrent' })
-      vim.keymap.set('n', '<Leader>gla', '<cmd>Tig --first-parent --all<CR>', { desc = '[G]it [L]og [A]ll' })
-      vim.keymap.set('n', '<Leader>glr', '<cmd>Tig --first-parent --all --reflog<CR>', { desc = '[G]it [L]og [R]eflog' })
+      map('<Leader>gs', 'status --first-parent --all', '[G]it [S]tatus')
+      map('<Leader>gg', '--first-parent --all', '[G]it [G]raph')
+      map('<Leader>gr', '--first-parent --all --reflog', '[G]it Graph [R]eflog')
+      map('<Leader>gl', '--first-parent', '[G]it [L]og')
+      map('<Leader>gf', '--all', '[G]it [F]ull Graph')
+
+      vim.keymap.set('n', '<Leader>gh', vim.cmd.TigOpenCurrentFile, { desc = '[G]it [H]istory' })
+      vim.keymap.set('n', '<Leader>gb', vim.cmd.TigBlame, { desc = '[G]it [B]lame' })
+      vim.keymap.set('n', '<Leader>gG', vim.cmd.TigGrep, { desc = 'TigGrep' })
+      vim.keymap.set('n', '<Leader>gR', vim.cmd.TigGrepResume, { desc = 'TigGrepResume' })
     end,
   },
 }

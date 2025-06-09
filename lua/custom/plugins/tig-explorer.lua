@@ -20,12 +20,17 @@ return {
         vim.keymap.set('n', keys, '<cmd>Tig' .. ' ' .. args .. ' <CR>', { desc = desc })
       end
 
-      map('<Leader>gs', 'status --first-parent --all', '[G]it [S]tatus')
-      map('<Leader>gg', '--first-parent --all', '[G]it [G]raph')
-      map('<Leader>gr', '--first-parent --all --reflog', '[G]it Graph [R]eflog')
-      map('<Leader>gl', '--first-parent', '[G]it [L]og')
-      map('<Leader>gf', '--all', '[G]it [F]ull Graph')
+      map('<Leader>gf', '--first-parent --all', 'ti[G] [F]irst parent')
+      map('<Leader>ga', '--all', 'ti[G] [A]ll')
+      map('<Leader>gr', '--first-parent --all --reflog', 'ti[G]it [R]eflog first parent')
+      map('<Leader>gR', '--all --reflog', 'ti[G] [R]eflog all')
+      map('<Leader>gl', '--first-parent', 'ti[G] [L]og first parent')
+      map('<Leader>gL', '', 'ti[G] [L]og all')
+      -- map('<Leader>gs', 'status --first-parent --all', '[G]it [S]tatus')
 
+      map('<Leader>gg', '--first-parent --all', 'ti[G] default [G]raph')
+
+      vim.keymap.set('n', '<Leader>gs', vim.cmd.TigStatus, { desc = '[G]it [S]tatus' })
       vim.keymap.set('n', '<Leader>gh', vim.cmd.TigOpenCurrentFile, { desc = '[G]it [H]istory' })
       vim.keymap.set('n', '<Leader>gb', vim.cmd.TigBlame, { desc = '[G]it [B]lame' })
       vim.keymap.set('n', '<Leader>gG', vim.cmd.TigGrep, { desc = 'TigGrep' })

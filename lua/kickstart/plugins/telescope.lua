@@ -61,6 +61,20 @@ return {
         --   },
         -- },
         -- pickers = {}
+        defaults = {
+          mappings = {
+            n = {
+              ['<C-\\>'] = require('telescope.actions.layout').toggle_preview,
+            },
+            i = {
+              ['<C-\\>'] = require('telescope.actions.layout').toggle_preview,
+            },
+          },
+          preview = {
+            hide_on_startup = true, -- hide previewer when picker starts
+          },
+        },
+
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -74,27 +88,52 @@ return {
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
+
+      -- this one doesn't work
+      -- local search_current_selection = function()
+      --   vim.cmd 'normal! "y'
+      --   builtin.grep_string { search = vim.fn.input('Grep/ ', vim.fn.getreg '+') }
+      -- end
+
+      local search_current_word = function()
+        builtin.grep_string { search = vim.fn.input('Grep/ ', vim.fn.expand '<cword>') }
+      end
+      local search_word = function()
+        builtin.grep_string { search = vim.fn.input 'Grep/ ' }
+      end
+
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sF', function()
+        builtin.find_files { hidden = true, no_ignore = true, no_ignore_parent = true }
+      end, { desc = '[S]earch all [F]iles' })
+
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+
+      vim.keymap.set('n', '<leader>sw', search_current_word, { desc = '[S]earch current [W]ord' })
+      vim.keymap.set('n', '<leader>sg', search_word, { desc = '[S]earch by [G]rep' })
+
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>gS', builtin.git_status, { desc = '[G]it [S]earch [S]tatus' })
-      vim.keymap.set('n', '<leader>p', builtin.find_files, { desc = '[S]earch [F]iles' })
 
-      -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader>/', function()
-        -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
-          previewer = false,
-        })
-      end, { desc = '[/] Fuzzily search in current buffer' })
+      -- Quick to access keys:
+      vim.keymap.set('n', '<leader>p', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>/', search_word, { desc = '[S]earch by [G]rep' })
+      -- vim.keymap.set('v', '<leader>/', search_current_selection, { desc = '[S]earch by [G]rep' })
+
+      -- -- Slightly advanced example of overriding default behavior and theme
+      -- vim.keymap.set('n', '<leader>/', function()
+      --   -- You can pass additional configuration to Telescope to change the theme, layout, etc.
+      --   builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+      --     winblend = 10,
+      --     previewer = false,
+      --   })
+      -- end, { desc = '[/] Fuzzily search in current buffer' })
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys

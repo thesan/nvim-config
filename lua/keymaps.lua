@@ -1,6 +1,12 @@
-vim.keymap.set('n', '<leader>n', vim.cmd.Ex, { desc = 'Open netrw' })
-vim.keymap.set('n', '<leader>g+', '<cmd>!git add %<CR>', { desc = 'git stage file' })
-vim.keymap.set('n', '<leader>g-', '<cmd>!git restore --staged %<CR>', { desc = 'git unstage file' })
+-- Resize splits
+vim.keymap.set('n', '<C-up>', '<cmd>res +1<CR>')
+vim.keymap.set('n', '<C-down>', '<cmd>res -1<CR>')
+vim.keymap.set('n', '<C-left>', '<cmd>vert res -1<CR>')
+vim.keymap.set('n', '<C-right>', '<cmd>vert res +1<CR>')
+
+-- Paste in visual mode
+vim.api.nvim_set_keymap('v', 'p', '"_dP', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', 'P', '"_dP', { noremap = true, silent = true })
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`

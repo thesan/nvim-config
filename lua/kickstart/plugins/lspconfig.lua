@@ -80,8 +80,14 @@ return {
           -- or a suggestion from your LSP for this to activate.
           map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
 
+          local pick_references = function(options)
+            return function()
+              require('telescope.builtin').lsp_references(require('telescope.themes').get_ivy(options))
+            end
+          end
+
           -- Find references for the word under your cursor.
-          map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('grr', pick_references { theme = 'ivy' }, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.

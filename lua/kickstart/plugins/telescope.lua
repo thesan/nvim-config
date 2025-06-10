@@ -61,17 +61,52 @@ return {
         --   },
         -- },
         -- pickers = {}
+        pickers = {
+          find_files = { theme = 'ivy' },
+          live_grep = { theme = 'ivy' },
+          buffers = { theme = 'ivy' },
+          help_tags = { theme = 'ivy' },
+        },
         defaults = {
+          initial_mode = 'normal', -- start in normal mode
+          layout_config = {
+            scroll_speed = 3, -- set scroll_speed for C-u C-d
+          },
           mappings = {
             n = {
+              ['gh'] = 'which_key',
               ['<C-\\>'] = require('telescope.actions.layout').toggle_preview,
+              ['dd'] = require('telescope.actions').delete_buffer,
+              ['q'] = require('telescope.actions').close,
+
+              -- https://github.com/linkarzu/dotfiles-latest/blob/d227281efac6be04e4ef0c691b5d3f8444101cbf/neovim/neobean/lua/plugins/telescope.lua
+              ['J'] = require('telescope.actions').preview_scrolling_down,
+              ['K'] = require('telescope.actions').preview_scrolling_up,
+              ['H'] = require('telescope.actions').preview_scrolling_left,
+              ['L'] = require('telescope.actions').preview_scrolling_right,
+
+              -- These will scroll the RESULTS window
+              ['<C-d>'] = require('telescope.actions').results_scrolling_down,
+              ['<C-u>'] = require('telescope.actions').results_scrolling_up,
             },
             i = {
+              ['<C-h>'] = 'which_key',
               ['<C-\\>'] = require('telescope.actions.layout').toggle_preview,
             },
           },
           preview = {
             hide_on_startup = true, -- hide previewer when picker starts
+          },
+
+          -- When I search for stuff in telescope, I want the path to be shown
+          -- first, this helps in files that are very deep in the tree and I
+          -- cannot see their name.
+          -- Also notice the "reverse_directories" option which will show the
+          -- closest dir right after the filename
+          path_display = {
+            filename_first = {
+              reverse_directories = true,
+            },
           },
         },
 
@@ -98,17 +133,36 @@ return {
       local search_current_word = function()
         builtin.grep_string { search = vim.fn.input('Grep/ ', vim.fn.expand '<cword>') }
       end
+
       local search_word = function()
-        builtin.grep_string { search = vim.fn.input 'Grep/ ' }
+        -- builtin.grep_string { search = vim.fn.input 'Grep/ ', theme = 'ivy' }
+        -- local frecency = require('telescope').extensions.frecency
+        builtin.grep_string(require('telescope.themes').get_ivy {
+          workspace = 'CWD',
+          search = vim.fn.input 'Grep/ ',
+          -- Frecency would be nice but it ignores files without a score
+          -- search_dirs = frecency.query {},
+          previewer = true,
+        })
+      end
+
+      local file_frecency = function()
+        require('telescope').extensions.frecency.frecency(require('telescope.themes').get_ivy {
+          workspace = 'CWD',
+        })
+      end
+
+      local search_files = function(options)
+        return function()
+          builtin.find_files(options)
+        end
       end
 
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
 
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>sF', function()
-        builtin.find_files { hidden = true, no_ignore = true, no_ignore_parent = true }
-      end, { desc = '[S]earch all [F]iles' })
+      vim.keymap.set('n', '<leader>sf', file_frecency, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sF', search_files { hidden = true, no_ignore = true, no_ignore_parent = true }, { desc = '[S]earch all [F]iles' })
 
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
 
@@ -121,7 +175,7 @@ return {
       vim.keymap.set('n', '<leader>gS', builtin.git_status, { desc = '[G]it [S]earch [S]tatus' })
 
       -- Quick to access keys:
-      vim.keymap.set('n', '<leader>p', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>p', file_frecency, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>/', search_word, { desc = '[S]earch by [G]rep' })
       -- vim.keymap.set('v', '<leader>/', search_current_selection, { desc = '[S]earch by [G]rep' })

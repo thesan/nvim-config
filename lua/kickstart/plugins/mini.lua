@@ -1,6 +1,15 @@
 return {
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
+
+    -- If you want to use mini.icons to mock nvim-web-devicons for broader compatibility:
+    init = function()
+      package.preload['nvim-web-devicons'] = function()
+        require('mini.icons').mock_nvim_web_devicons()
+        return package.loaded['nvim-web-devicons']
+      end
+    end,
+
     config = function()
       -- Better Around/Inside textobjects
       --
@@ -16,6 +25,14 @@ return {
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
+
+      require('mini.comment').setup {
+        mappings = {
+          comment_line = 'gc',
+        },
+      }
+
+      -- require('mini.map').setup {}
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,

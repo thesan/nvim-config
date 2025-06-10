@@ -1,10 +1,9 @@
 return {
   {
     'youyoumu/pretty-ts-errors.nvim',
-    opts = {
-      executable = 'npx pretty-ts-errors-markdown',
-    },
     config = function()
+      require('pretty-ts-errors').setup {}
+
       -- Show error under cursor
       vim.keymap.set('n', '<leader>te', function()
         require('pretty-ts-errors').show_formatted_error()

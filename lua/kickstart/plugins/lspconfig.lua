@@ -87,7 +87,7 @@ return {
           end
 
           -- Find references for the word under your cursor.
-          map('grr', pick_references { theme = 'ivy' }, '[G]oto [R]eferences')
+          map('grr', pick_references { theme = 'ivy', previewer = true }, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
@@ -155,6 +155,34 @@ return {
                 vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
               end,
             })
+
+            -- -- Format on save with eslint:
+            -- if client.name == 'eslint' then
+            --   enclient.server_capabilities.documentFormattingProvider = true
+            -- elseif client.name == 'ts_ls' then
+            --   client.server_capabilities.documentFormattingProvider = false
+            -- end
+            -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#eslint
+            local base_on_attach = vim.lsp.config.eslint.on_attach
+            vim.lsp.config('eslint', {
+              on_attach = function(client, bufnr)
+                if not base_on_attach then
+                  return
+                end
+
+                base_on_attach(client, bufnr)
+                vim.api.nvim_create_autocmd('BufWritePre', {
+                  buffer = bufnr,
+                  command = 'LspEslintFixAll',
+                })
+              end,
+            })
+            -- Format on save with eslint:
+            -- (https://neovim.discourse.group/t/how-can-i-setup-eslint-to-format-on-save/2570/5)
+            -- vim.api.nvim_create_autocmd('BufWritePre', {
+            --   pattern = { '*.tsx', '*.ts', '*.jsx', '*.js' },
+            --   command = 'silent! EslintFixAll',
+            -- })
           end
 
           -- The following code creates a keymap to toggle inlay hints in your
@@ -225,6 +253,12 @@ return {
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {},
+        eslint = {
+          -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#eslint
+          settings = {
+            codeActionOnSave = { enable = true },
+          },
+        },
         --
 
         lua_ls = {

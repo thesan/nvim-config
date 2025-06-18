@@ -140,6 +140,7 @@ return {
         builtin.grep_string(require('telescope.themes').get_ivy {
           workspace = 'CWD',
           search = vim.fn.input 'Grep/ ',
+          use_regex = true,
           -- Frecency would be nice but it ignores files without a score
           -- search_dirs = frecency.query {},
           previewer = true,

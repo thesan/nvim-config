@@ -1,8 +1,19 @@
 return {
   {
     'youyoumu/pretty-ts-errors.nvim',
+    dependencies = {
+      'MeanderingProgrammer/render-markdown.nvim',
+    },
     config = function()
-      require('pretty-ts-errors').setup {}
+      require('pretty-ts-errors').setup {
+        auto_open = false, -- Automatically show errors on hover
+        float_opts = {
+          border = 'rounded', -- Border style for floating windows
+          max_width = 120, -- Maximum width of floating windows
+          max_height = 60, -- Maximum height of floating windows
+          wrap = false, -- Whether to wrap long lines
+        },
+      }
 
       -- Show error under cursor
       vim.keymap.set('n', '<leader>te', function()

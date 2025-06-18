@@ -31,6 +31,8 @@ return {
         opts = {},
       },
       'folke/lazydev.nvim',
+
+      'giuxtaposition/blink-cmp-copilot',
     },
     --- @module 'blink.cmp'
     --- @type blink.cmp.Config
@@ -59,7 +61,7 @@ return {
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
         ['<enter>'] = { 'accept', 'fallback' },
-        -- ['<C-e>'] = { 'select_and_accept' },
+        ['<C-e>'] = { 'accept', 'fallback' },
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -78,9 +80,11 @@ return {
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'lsp', 'path', 'snippets', 'lazydev', 'copilot' },
+        -- default = { 'copilot', 'lsp', 'path', 'snippets' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+          copilot = { name = 'copilot', module = 'blink-cmp-copilot', score_offset = 100, async = true },
         },
       },
 

@@ -197,6 +197,36 @@ return {
         end,
       })
 
+      -- -- Format on save with eslint:
+      -- if client.name == 'eslint' then
+      --   enclient.server_capabilities.documentFormattingProvider = true
+      -- elseif client.name == 'ts_ls' then
+      --   client.server_capabilities.documentFormattingProvider = false
+      -- end
+      -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#eslint
+      local base_on_attach = vim.lsp.config.eslint.on_attach
+      vim.lsp.config('eslint', {
+        on_attach = function(client, bufnr)
+          if not base_on_attach then
+            print 'Error: No base on_attach function found for eslint'
+            return
+          end
+
+          base_on_attach(client, bufnr)
+          vim.api.nvim_create_autocmd('BufWritePre', {
+            buffer = bufnr,
+            command = 'LspEslintFixAll',
+            group = vim.api.nvim_create_augroup('LspEslintFormat', { clear = true }),
+          })
+        end,
+      })
+      -- Format on save with eslint:
+      -- (https://neovim.discourse.group/t/how-can-i-setup-eslint-to-format-on-save/2570/5)
+      -- vim.api.nvim_create_autocmd('BufWritePre', {
+      --   pattern = { '*.tsx', '*.ts', '*.jsx', '*.js' },
+      --   command = 'silent! EslintFixAll',
+      -- })
+
       -- Diagnostic Config
       -- See :help vim.diagnostic.Opts
       vim.diagnostic.config {
@@ -252,7 +282,9 @@ return {
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {},
+        ts_ls = {
+          enable = false, -- Disable ts_ls so that we can use typescript-tools.nvim instead
+        },
         eslint = {
           -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#eslint
           settings = {
@@ -294,13 +326,20 @@ return {
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
       })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+      -- Disable automatic installation of LSPs by mason-lspconfig
+      -- require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_installation = false,
         handlers = {
           function(server_name)
+            -- Disable tsserver so that we can use typescript-tools.nvim instead
+            if server_name == 'tsserver' then
+              print 'Skipping tsserver setup, using typescript-tools.nvim instead'
+              return
+            end
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling

@@ -28,6 +28,9 @@ return {
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+
+      -- Support for ripgrep arguments
+      'nvim-telescope/telescope-live-grep-args.nvim',
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -51,7 +54,9 @@ return {
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
-      require('telescope').setup {
+      local telescope = require 'telescope'
+
+      telescope.setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
@@ -64,7 +69,14 @@ return {
         pickers = {
           find_files = { theme = 'ivy' },
           live_grep = { theme = 'ivy' },
-          buffers = { theme = 'ivy' },
+          buffers = {
+            theme = 'ivy',
+            mappings = {
+              n = {
+                ['dd'] = require('telescope.actions').delete_buffer,
+              },
+            },
+          },
           help_tags = { theme = 'ivy' },
         },
         defaults = {
@@ -76,7 +88,6 @@ return {
             n = {
               ['gh'] = 'which_key',
               ['<C-\\>'] = require('telescope.actions.layout').toggle_preview,
-              ['dd'] = require('telescope.actions').delete_buffer,
               ['q'] = require('telescope.actions').close,
 
               -- https://github.com/linkarzu/dotfiles-latest/blob/d227281efac6be04e4ef0c691b5d3f8444101cbf/neovim/neobean/lua/plugins/telescope.lua
@@ -104,9 +115,7 @@ return {
           -- Also notice the "reverse_directories" option which will show the
           -- closest dir right after the filename
           path_display = {
-            filename_first = {
-              reverse_directories = true,
-            },
+            'filename_first',
           },
         },
 
@@ -114,41 +123,62 @@ return {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+
+          live_grep_args = {
+            auto_quoting = true, -- enable/disable auto-quoting
+            -- define mappings, e.g.
+            mappings = { -- extend mappings
+              i = {
+                ['<C-h>'] = function()
+                  local ripgrep_guide_url = 'https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md'
+                  vim.fn.jobstart('open ' .. ripgrep_guide_url, { detach = true })
+                end,
+              },
+            },
+          },
         },
       }
 
       -- Enable Telescope extensions if they are installed
-      pcall(require('telescope').load_extension, 'fzf')
-      pcall(require('telescope').load_extension, 'ui-select')
+      pcall(telescope.load_extension, 'fzf')
+      pcall(telescope.load_extension, 'ui-select')
+      pcall(telescope.load_extension, 'live_grep_args')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-
-      -- this one doesn't work
-      -- local search_current_selection = function()
-      --   vim.cmd 'normal! "y'
-      --   builtin.grep_string { search = vim.fn.input('Grep/ ', vim.fn.getreg '+') }
-      -- end
+      local themes = require 'telescope.themes'
+      local live_grep_args_shortcuts = require 'telescope-live-grep-args.shortcuts'
+      local live_grep_args_helpers = require 'telescope-live-grep-args.helpers'
 
       local search_current_word = function()
-        builtin.grep_string { search = vim.fn.input('Grep/ ', vim.fn.expand '<cword>') }
+        live_grep_args_shortcuts.grep_word_under_cursor(themes.get_ivy {
+          workspace = 'CWD',
+          previewer = true,
+        })
       end
 
-      local search_word = function()
-        -- builtin.grep_string { search = vim.fn.input 'Grep/ ', theme = 'ivy' }
-        -- local frecency = require('telescope').extensions.frecency
-        builtin.grep_string(require('telescope.themes').get_ivy {
+      local live_grep_args = function()
+        local value = vim.fn.input 'Grep/ '
+        if value == '' then
+          return
+        end
+
+        telescope.extensions.live_grep_args.live_grep_args(themes.get_ivy {
           workspace = 'CWD',
-          search = vim.fn.input 'Grep/ ',
-          use_regex = true,
-          -- Frecency would be nice but it ignores files without a score
-          -- search_dirs = frecency.query {},
+          previewer = true,
+          default_text = live_grep_args_helpers.quote(value) .. ' -F ',
+        })
+      end
+
+      local grep_visual_selection = function()
+        live_grep_args_shortcuts.grep_visual_selection(themes.get_ivy {
+          workspace = 'CWD',
           previewer = true,
         })
       end
 
       local file_frecency = function()
-        require('telescope').extensions.frecency.frecency(require('telescope.themes').get_ivy {
+        telescope.extensions.frecency.frecency(themes.get_ivy {
           workspace = 'CWD',
         })
       end
@@ -168,7 +198,7 @@ return {
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
 
       vim.keymap.set('n', '<leader>sw', search_current_word, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', search_word, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('n', '<leader>sg', live_grep_args, { desc = '[S]earch by [G]rep' })
 
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
@@ -177,9 +207,13 @@ return {
 
       -- Quick to access keys:
       vim.keymap.set('n', '<leader>p', file_frecency, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-      vim.keymap.set('n', '<leader>/', search_word, { desc = '[S]earch by [G]rep' })
-      -- vim.keymap.set('v', '<leader>/', search_current_selection, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('n', '<leader><leader>', function()
+        builtin.buffers { sort_mru = true }
+      end, { desc = '[ ] Find existing buffers' })
+
+      vim.keymap.set('n', '<leader>*', search_current_word, { desc = '[S]earch current [W]ord' })
+      vim.keymap.set('n', '<leader>/', live_grep_args, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('v', '<leader>/', grep_visual_selection, { desc = '[S]earch by [G]rep' })
 
       -- -- Slightly advanced example of overriding default behavior and theme
       -- vim.keymap.set('n', '<leader>/', function()

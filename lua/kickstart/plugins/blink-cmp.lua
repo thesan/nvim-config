@@ -32,7 +32,7 @@ return {
       },
       'folke/lazydev.nvim',
 
-      'giuxtaposition/blink-cmp-copilot',
+      -- 'giuxtaposition/blink-cmp-copilot',
     },
     --- @module 'blink.cmp'
     --- @type blink.cmp.Config
@@ -76,12 +76,15 @@ return {
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = { auto_show = true, auto_show_delay_ms = 500 },
+        list = {
+          selection = { preselect = false },
+        },
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev', 'copilot' },
-        -- default = { 'copilot', 'lsp', 'path', 'snippets' },
+        -- default = { 'lsp', 'path', 'snippets', 'lazydev', 'copilot' },
+        default = { 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
           copilot = { name = 'copilot', module = 'blink-cmp-copilot', score_offset = 100, async = true },

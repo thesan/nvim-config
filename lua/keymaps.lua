@@ -8,6 +8,11 @@ vim.keymap.set('n', '<C-right>', '<cmd>vert res +1<CR>')
 vim.api.nvim_set_keymap('v', 'p', '"_dP', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', 'P', '"_dP', { noremap = true, silent = true })
 
+-- Remap macro
+vim.keymap.set('n', 'q', '<nop>', { noremap = true })
+vim.keymap.set('n', 'Q', 'q', { noremap = true, desc = 'Record macro' })
+vim.keymap.set('n', '<M-q>', 'Q', { noremap = true, desc = 'Replay last register' })
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 

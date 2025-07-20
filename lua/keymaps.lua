@@ -5,7 +5,7 @@ vim.keymap.set('n', '<C-left>', '<cmd>vert res -1<CR>')
 vim.keymap.set('n', '<C-right>', '<cmd>vert res +1<CR>')
 
 -- Paste in visual mode
-vim.api.nvim_set_keymap('v', 'p', '"_dP', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', 'p', '"_dp', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', 'P', '"_dP', { noremap = true, silent = true })
 
 -- Remap macro

@@ -212,6 +212,7 @@ return {
             return
           end
 
+          print('LSP: eslint attached to buffer ' .. bufnr)
           base_on_attach(client, bufnr)
           vim.api.nvim_create_autocmd('BufWritePre', {
             buffer = bufnr,

@@ -284,7 +284,7 @@ return {
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {
-          enable = false, -- Disable ts_ls so that we can use typescript-tools.nvim instead
+          enable = true, -- Disable ts_ls so that we can use typescript-tools.nvim instead
         },
         eslint = {
           -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#eslint
@@ -328,8 +328,8 @@ return {
         'stylua', -- Used to format Lua code
       })
 
-      -- Disable automatic installation of LSPs by mason-lspconfig
-      -- require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      -- This should be commented out to use typescript tools to Disable automatic installation of LSPs by mason-lspconfig
+      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
@@ -337,10 +337,10 @@ return {
         handlers = {
           function(server_name)
             -- Disable tsserver so that we can use typescript-tools.nvim instead
-            if server_name == 'tsserver' then
-              print 'Skipping tsserver setup, using typescript-tools.nvim instead'
-              return
-            end
+            -- if server_name == 'tsserver' then
+            --   print 'Skipping tsserver setup, using typescript-tools.nvim instead'
+            --   return
+            -- end
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling

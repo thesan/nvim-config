@@ -9,6 +9,9 @@ vim.opt.tabstop = 2 -- number of columns occupied by a tab
 vim.opt.softtabstop = 2 -- see multiple spaces as tabstops so <BS> does the right thing
 vim.opt.shiftwidth = 2 -- width for autoindents
 
+-- Nowrap
+vim.opt.wrap = false -- don't wrap lines
+
 -- Fold (handled by nvim-ufo instead)
 -- vim.opt.foldmethod = 'indent'
 -- vim.opt.foldmethod = 'expr'

@@ -1,0 +1,78 @@
+--
+-- https://github.com/NeogitOrg/neogit
+--
+return {
+  'NeogitOrg/neogit',
+  dependencies = {
+    'nvim-lua/plenary.nvim', -- required
+    'sindrets/diffview.nvim', -- optional - Diff integration
+    'nvim-tree/nvim-web-devicons', -- optional - Icons for sindrets/diffview.nvim
+
+    -- Only one of these is needed.
+    'nvim-telescope/telescope.nvim', -- optional
+    -- "ibhagwan/fzf-lua",              -- optional
+    -- "echasnovski/mini.pick",         -- optional
+    -- "folke/snacks.nvim",             -- optional
+  },
+  config = function()
+    local neogit = require 'neogit'
+
+    neogit.setup {
+      -- "ascii"   is the graph the git CLI generates
+      -- "unicode" is the graph like https://github.com/rbong/vim-flog
+      -- "kitty"   is the graph like https://github.com/isakbm/gitgraph.nvim - use https://github.com/rbong/flog-symbols if you don't use Kitty
+      graph_style = 'unicode',
+    }
+
+    local diffview = require 'diffview'
+    local actions = require 'diffview.actions'
+    diffview.setup {
+      enhanced_diff_hl = true,
+      view = {
+        -- Configure the layout and behavior of different types of views.
+        -- Available layouts:
+        --  'diff1_plain'
+        --    |'diff2_horizontal'
+        --    |'diff2_vertical'
+        --    |'diff3_horizontal'
+        --    |'diff3_vertical'
+        --    |'diff3_mixed'
+        --    |'diff4_mixed'
+        -- For more info, see |diffview-config-view.x.layout|.
+        default = {
+          -- Config for changed files, and staged files in diff views.
+          layout = 'diff2_horizontal',
+          disable_diagnostics = true, -- Temporarily disable diagnostics for diff buffers while in the view.
+          winbar_info = false, -- See |diffview-config-view.x.winbar_info|
+        },
+      },
+      keymaps = {
+        view = {
+          ['q'] = diffview.close, -- Close the diffview window
+          ['gf'] = function()
+            actions.goto_file_edit()
+            vim.cmd 'tabnext'
+            vim.cmd 'tabclose'
+          end,
+        },
+        file_panel = {
+          ['q'] = diffview.close, -- Close the diffview window
+          ['gf'] = function()
+            actions.goto_file_edit()
+            vim.cmd 'tabnext'
+            vim.cmd 'tabclose'
+          end,
+        },
+      },
+    }
+
+    vim.keymap.set('n', '<Leader>gg', neogit.open, { desc = 'Neo[G]it' })
+    vim.keymap.set('n', '<Leader>gl', function()
+      neogit.open { 'log' }
+    end, { desc = 'Neo[G]it [L]og' })
+    vim.keymap.set('n', '<Leader>gc', function()
+      neogit.open { 'commit' }
+    end, { desc = 'Neo[G]it [C]ommit' })
+    vim.keymap.set('n', '<Leader>gs', diffview.open, { desc = '[G]it [S]tatus' })
+  end,
+}

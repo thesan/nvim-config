@@ -26,6 +26,31 @@ return {
 
     local diffview = require 'diffview'
     local actions = require 'diffview.actions'
+
+    local goto_file_edit = function()
+      -- This function is used to open the file in the editor.
+      -- It will close the diffview window after opening the file.
+      actions.goto_file_edit()
+      vim.cmd 'tabnext' -- Switch to the next tab
+      vim.cmd 'tabclose' -- Close the diffview tab
+    end
+
+    local set_1col_layout = function()
+      -- Go to the first split (the leftmost one)
+      vim.cmd 'wincmd h'
+      vim.cmd 'wincmd h'
+
+      vim.cmd 'wincmd l' -- Go to the second split
+      vim.cmd 'vertical resize 7' -- Set its width to few characters
+
+      vim.cmd 'wincmd l' -- Go to the last split
+    end
+
+    local reset_layout = function()
+      actions.toggle_files()
+      actions.toggle_files()
+    end
+
     diffview.setup {
       enhanced_diff_hl = true,
       view = {
@@ -49,19 +74,19 @@ return {
       keymaps = {
         view = {
           ['q'] = diffview.close, -- Close the diffview window
-          ['gf'] = function()
-            actions.goto_file_edit()
-            vim.cmd 'tabnext'
-            vim.cmd 'tabclose'
-          end,
+          ['<C-n>'] = actions.select_next_entry, -- Move to the next file in the diff view
+          ['<C-p>'] = actions.select_prev_entry, -- Move to the previous file in the diff view
+          -- ['gf'] = goto_file_edit,
+          ['<C-a>'] = set_1col_layout,
+          ['<C-s>'] = reset_layout,
         },
         file_panel = {
           ['q'] = diffview.close, -- Close the diffview window
-          ['gf'] = function()
-            actions.goto_file_edit()
-            vim.cmd 'tabnext'
-            vim.cmd 'tabclose'
-          end,
+          ['<C-n>'] = actions.select_next_entry, -- Move to the next file in the diff view
+          ['<C-p>'] = actions.select_prev_entry, -- Move to the previous file in the diff view
+          -- ['gf'] = goto_file_edit,
+          ['<C-a>'] = set_1col_layout,
+          ['<C-s>'] = reset_layout,
         },
       },
     }

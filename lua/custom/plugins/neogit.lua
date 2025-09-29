@@ -3,6 +3,10 @@
 --
 return {
   'NeogitOrg/neogit',
+  -- url = 'https://github.com/thesan/neogit.git',
+  dir = '~/Projects/devenv/neogit',
+  dev = true,
+
   dependencies = {
     'nvim-lua/plenary.nvim', -- required
     'sindrets/diffview.nvim', -- optional - Diff integration
@@ -21,7 +25,7 @@ return {
       -- "ascii"   is the graph the git CLI generates
       -- "unicode" is the graph like https://github.com/rbong/vim-flog
       -- "kitty"   is the graph like https://github.com/isakbm/gitgraph.nvim - use https://github.com/rbong/flog-symbols if you don't use Kitty
-      graph_style = 'unicode',
+      graph_style = 'kitty',
     }
 
     local diffview = require 'diffview'
@@ -79,6 +83,11 @@ return {
           -- ['gf'] = goto_file_edit,
           ['<C-a>'] = set_1col_layout,
           ['<C-s>'] = reset_layout,
+          ['<C-r>'] = 'RefreshBuffer',
+        },
+        popup = {
+          ['<C-r>'] = 'RefreshBuffer',
+          ['<Esc>'] = false, -- Disable the escape key
         },
         file_panel = {
           ['q'] = diffview.close, -- Close the diffview window
@@ -92,9 +101,9 @@ return {
     }
 
     vim.keymap.set('n', '<Leader>gg', neogit.open, { desc = 'Neo[G]it' })
-    vim.keymap.set('n', '<Leader>gl', function()
-      neogit.open { 'log' }
-    end, { desc = 'Neo[G]it [L]og' })
+    -- vim.keymap.set('n', '<Leader>gl', function()
+    --   neogit.open { 'log' }
+    -- end, { desc = 'Neo[G]it [L]og' })
     vim.keymap.set('n', '<Leader>gc', function()
       neogit.open { 'commit' }
     end, { desc = 'Neo[G]it [C]ommit' })

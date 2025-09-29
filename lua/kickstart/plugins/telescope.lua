@@ -55,6 +55,8 @@ return {
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       local telescope = require 'telescope'
+      local action_state = require 'telescope.actions.state'
+      local global_state = require 'telescope.state'
 
       telescope.setup {
         -- You can put your default mappings / updates / etc. in here
@@ -71,12 +73,33 @@ return {
           live_grep = { theme = 'ivy' },
           buffers = {
             theme = 'ivy',
+            cache_picker = false,
             mappings = {
               n = {
                 ['dd'] = require('telescope.actions').delete_buffer,
               },
             },
           },
+
+          pickers = {
+            theme = 'ivy',
+            previewer = true,
+            mappings = {
+              n = {
+                ['dd'] = function(prompt_bufnr)
+                  local current_picker = action_state.get_current_picker(prompt_bufnr)
+                  current_picker:delete_selection(function(selection)
+                    local cached_pickers = global_state.get_global_key 'cached_pickers'
+                    if cached_pickers then
+                      table.remove(cached_pickers, selection.index)
+                      global_state.set_global_key('cached_pickers', cached_pickers)
+                    end
+                  end)
+                end,
+              },
+            },
+          },
+
           help_tags = { theme = 'ivy' },
         },
         defaults = {
@@ -84,6 +107,12 @@ return {
           layout_config = {
             scroll_speed = 3, -- set scroll_speed for C-u C-d
           },
+
+          cache_picker = {
+            num_pickers = -1, -- This will cache all the pickers
+            ignore_empty_prompt = true, -- If the prompt is empty, do not use the cache
+          },
+
           mappings = {
             n = {
               ['gh'] = 'which_key',
@@ -126,8 +155,33 @@ return {
 
           live_grep_args = {
             auto_quoting = true, -- enable/disable auto-quoting
+
+            previewer = true,
+
+            -- TODO get something like this working:
+            -- filetype = {
+            --   lld = 'apps/ledger-live-desktop/src/**',
+            -- },
+
             -- define mappings, e.g.
             mappings = { -- extend mappings
+              n = {
+                ['glld'] = function(prompt_bufnr)
+                  local picker = action_state.get_current_picker(prompt_bufnr)
+                  local prompt = picker:_get_prompt()
+                  picker:set_prompt(prompt .. ' -g "apps/ledger-live-desktop/src/**"')
+                end,
+                ['gllm'] = function(prompt_bufnr)
+                  local picker = action_state.get_current_picker(prompt_bufnr)
+                  local prompt = picker:_get_prompt()
+                  picker:set_prompt(prompt .. ' -g "apps/ledger-live-mobile/src/**"')
+                end,
+                ['gT'] = function(prompt_bufnr)
+                  local picker = action_state.get_current_picker(prompt_bufnr)
+                  local prompt = picker:_get_prompt()
+                  picker:set_prompt(prompt .. ' -g "!*.{test,spec}.*"')
+                end,
+              },
               i = {
                 ['<C-h>'] = function()
                   local ripgrep_guide_url = 'https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md'
@@ -158,16 +212,20 @@ return {
       end
 
       local live_grep_args = function()
-        local value = vim.fn.input 'Grep/ '
-        if value == '' then
+        local value = vim.fn.input { prompt = 'Grep/ ', cancelreturn = 0 }
+        if value == 0 then
           return
+        elseif value == '' then
+          telescope.extensions.live_grep_args.live_grep_args(themes.get_ivy {
+            workspace = 'CWD',
+            default_text = '',
+          })
+        else
+          telescope.extensions.live_grep_args.live_grep_args(themes.get_ivy {
+            workspace = 'CWD',
+            default_text = live_grep_args_helpers.quote(value) .. ' -F ',
+          })
         end
-
-        telescope.extensions.live_grep_args.live_grep_args(themes.get_ivy {
-          workspace = 'CWD',
-          previewer = true,
-          default_text = live_grep_args_helpers.quote(value) .. ' -F ',
-        })
       end
 
       local grep_visual_selection = function()
@@ -201,7 +259,7 @@ return {
       vim.keymap.set('n', '<leader>sg', live_grep_args, { desc = '[S]earch by [G]rep' })
 
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+      vim.keymap.set('n', '<leader>sr', builtin.pickers, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader>gS', builtin.git_status, { desc = '[G]it [S]earch [S]tatus' })
 

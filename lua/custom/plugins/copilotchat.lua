@@ -1,3 +1,4 @@
+-- https://github.com/CopilotC-Nvim/CopilotChat.nvim
 return {
   {
     'CopilotC-Nvim/CopilotChat.nvim',
@@ -9,11 +10,26 @@ return {
     build = 'make tiktoken', -- Only on MacOS or Linux
 
     keys = {
-      { '<leader>c', '<cmd>CopilotChat<cr>', desc = 'Copilot Chat' },
+      {
+        '<leader>c',
+        function()
+          require('CopilotChat').open {
+            sticky = {
+              '$gemini-2.5-pro',
+              '#buffer',
+              '#gitdiff:staged',
+            },
+          }
+        end,
+        desc = 'Copilot Chat',
+      },
     },
 
     -- See Commands section for default commands if you want to lazy load on them
     config = function()
+      local config = require 'CopilotChat.config'
+      config.mappings.reset = false -- disable the reset mapping
+
       require('CopilotChat').setup()
     end,
   },

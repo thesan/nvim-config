@@ -170,11 +170,11 @@ return {
                   return
                 end
 
-                base_on_attach(client, bufnr)
-                vim.api.nvim_create_autocmd('BufWritePre', {
-                  buffer = bufnr,
-                  command = 'LspEslintFixAll',
-                })
+                -- base_on_attach(client, bufnr)
+                -- vim.api.nvim_create_autocmd('BufWritePre', {
+                --   buffer = bufnr,
+                --   command = 'silent! LspEslintFixAll',
+                -- })
               end,
             })
             -- Format on save with eslint:
@@ -212,13 +212,13 @@ return {
             return
           end
 
-          print('LSP: eslint attached to buffer ' .. bufnr)
-          base_on_attach(client, bufnr)
-          vim.api.nvim_create_autocmd('BufWritePre', {
-            buffer = bufnr,
-            command = 'LspEslintFixAll',
-            group = vim.api.nvim_create_augroup('LspEslintFormat', { clear = true }),
-          })
+          -- print('LSP: eslint attached to buffer ' .. bufnr)
+          -- base_on_attach(client, bufnr)
+          -- vim.api.nvim_create_autocmd('BufWritePre', {
+          --   buffer = bufnr,
+          --   command = 'silent! LspEslintFixAll',
+          --   group = vim.api.nvim_create_augroup('LspEslintFormat', { clear = true }),
+          -- })
         end,
       })
       -- Format on save with eslint:
@@ -284,7 +284,7 @@ return {
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {
-          enable = true, -- Disable ts_ls so that we can use typescript-tools.nvim instead
+          enable = false, -- Disable ts_ls so that we can use typescript-tools.nvim instead
         },
         eslint = {
           -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#eslint
@@ -329,7 +329,7 @@ return {
       })
 
       -- This should be commented out to use typescript tools to Disable automatic installation of LSPs by mason-lspconfig
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      -- require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)

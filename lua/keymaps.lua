@@ -1,3 +1,7 @@
+-- Terminal
+vim.keymap.set('n', '<leader>T', '<cmd>terminal<CR>', { desc = 'Open terminal' })
+vim.keymap.set('t', '<C-[>', '<C-\\><C-n>', { silent = true })
+
 -- Resize splits
 vim.keymap.set('n', '<C-up>', '<cmd>res +1<CR>')
 vim.keymap.set('n', '<C-down>', '<cmd>res -1<CR>')

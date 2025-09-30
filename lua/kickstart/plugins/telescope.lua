@@ -88,6 +88,11 @@ return {
               n = {
                 ['dd'] = function(prompt_bufnr)
                   local current_picker = action_state.get_current_picker(prompt_bufnr)
+                  print(vim.inspect(current_picker.prompt_title))
+                  if current_picker.prompt_title ~= 'Pickers' then
+                    -- Use normal dd action on prompt
+                    return current_picker:set_prompt ''
+                  end
                   current_picker:delete_selection(function(selection)
                     local cached_pickers = global_state.get_global_key 'cached_pickers'
                     if cached_pickers then
@@ -110,7 +115,7 @@ return {
 
           cache_picker = {
             num_pickers = -1, -- This will cache all the pickers
-            ignore_empty_prompt = true, -- If the prompt is empty, do not use the cache
+            ignore_empty_prompt = false,
           },
 
           mappings = {

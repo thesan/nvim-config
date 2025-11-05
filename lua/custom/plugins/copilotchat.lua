@@ -15,7 +15,7 @@ return {
         function()
           require('CopilotChat').open {
             sticky = {
-              '$gemini-2.5-pro',
+              '$claude-sonnet-4.5',
               '#buffer',
               '#gitdiff:staged',
             },

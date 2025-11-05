@@ -283,9 +283,53 @@ return {
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {
-          enable = false, -- Disable ts_ls so that we can use typescript-tools.nvim instead
+        -- ts_ls = {
+        --   enable = false, -- Disable ts_ls so that we can use other LSP for TypeScript
+        -- },
+        vtsls = {
+          -- explicitly add default filetypes, so that we can extend
+          -- them in related extras
+          filetypes = {
+            'javascript',
+            'javascriptreact',
+            'javascript.jsx',
+            'typescript',
+            'typescriptreact',
+            'typescript.tsx',
+          },
+          settings = {
+            typescript = {
+              tsserver = {
+                maxTsServerMemory = 8192,
+                nodePath = '/opt/homebrew/bin/node',
+              },
+              -- updateImportsOnFileMove = { enabled = 'always' },
+              -- suggest = {
+              --   completeFunctionCalls = true,
+              -- },
+              -- inlayHints = {
+              --   enumMemberValues = { enabled = true },
+              --   functionLikeReturnTypes = { enabled = true },
+              --   parameterNames = { enabled = 'literals' },
+              --   parameterTypes = { enabled = true },
+              --   propertyDeclarationTypes = { enabled = true },
+              --   variableTypes = { enabled = false },
+              -- },
+            },
+            -- complete_function_calls = true,
+            -- vtsls = {
+            --   enableMoveToFileCodeAction = true,
+            --   autoUseWorkspaceTsdk = true,
+            --   experimental = {
+            --     maxInlayHintLength = 30,
+            --     completion = {
+            --       enableServerSideFuzzyMatch = true,
+            --     },
+            --   },
+            -- },
+          },
         },
+
         eslint = {
           -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#eslint
           settings = {
@@ -328,19 +372,13 @@ return {
         'stylua', -- Used to format Lua code
       })
 
-      -- This should be commented out to use typescript tools to Disable automatic installation of LSPs by mason-lspconfig
-      -- require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_installation = false,
         handlers = {
           function(server_name)
-            -- Disable tsserver so that we can use typescript-tools.nvim instead
-            -- if server_name == 'tsserver' then
-            --   print 'Skipping tsserver setup, using typescript-tools.nvim instead'
-            --   return
-            -- end
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling

@@ -1,6 +1,6 @@
 -- vim.g.netrw_banner = 0 -- remove help banner BUG: https://github.com/neovim/neovim/issues/23650
-vim.g.netrw_liststyle = 1 -- tree view style as default view
-vim.g.netrw_bufsettings = 'noma nomod nu rnu nobl nowrap ro'
+-- vim.g.netrw_liststyle = 1 -- tree view style as default view
+-- vim.g.netrw_bufsettings = 'noma nomod nu rnu nobl nowrap ro'
 
 -- Indentation
 vim.opt.autoindent = true -- indent a new line the same amount as the line just typed

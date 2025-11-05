@@ -228,5 +228,11 @@ return {
       ---@type NoiceFormatOptions
       format = {}, --- @see section on formatting
     }
+
+    -- Keymap to open Noice all messages in full screen
+    vim.keymap.set('n', '<leader>l', function()
+      vim.cmd 'Noice all'
+      vim.cmd 'resize'
+    end, { desc = 'Noice All' })
   end,
 }

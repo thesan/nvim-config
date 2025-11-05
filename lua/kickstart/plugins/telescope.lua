@@ -55,6 +55,7 @@ return {
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       local telescope = require 'telescope'
+      local actions = require 'telescope.actions'
       local action_state = require 'telescope.actions.state'
       local global_state = require 'telescope.state'
 
@@ -76,7 +77,7 @@ return {
             cache_picker = false,
             mappings = {
               n = {
-                ['dd'] = require('telescope.actions').delete_buffer,
+                ['dd'] = actions.delete_buffer,
               },
             },
           },
@@ -125,15 +126,27 @@ return {
               ['q'] = require('telescope.actions').close,
 
               -- https://github.com/linkarzu/dotfiles-latest/blob/d227281efac6be04e4ef0c691b5d3f8444101cbf/neovim/neobean/lua/plugins/telescope.lua
-              ['J'] = require('telescope.actions').preview_scrolling_down,
-              ['K'] = require('telescope.actions').preview_scrolling_up,
-              ['H'] = require('telescope.actions').preview_scrolling_left,
-              ['L'] = require('telescope.actions').preview_scrolling_right,
+              ['J'] = actions.preview_scrolling_down,
+              ['K'] = actions.preview_scrolling_up,
+              ['H'] = actions.preview_scrolling_left,
+              ['L'] = actions.preview_scrolling_right,
 
               -- These will scroll the RESULTS window
-              ['<C-d>'] = require('telescope.actions').results_scrolling_down,
-              ['<C-u>'] = require('telescope.actions').results_scrolling_up,
+              ['<C-d>'] = actions.results_scrolling_down,
+              ['<C-u>'] = actions.results_scrolling_up,
+
+              ['glld'] = function(prompt_bufnr)
+                local picker = action_state.get_current_picker(prompt_bufnr)
+                local prompt = picker:_get_prompt()
+                picker:set_prompt('apps/ledger-live-desktop/ ' .. prompt)
+              end,
+              ['gllm'] = function(prompt_bufnr)
+                local picker = action_state.get_current_picker(prompt_bufnr)
+                local prompt = picker:_get_prompt()
+                picker:set_prompt('apps/ledger-live-mobile/ ' .. prompt)
+              end,
             },
+
             i = {
               ['<C-h>'] = 'which_key',
               ['<C-\\>'] = require('telescope.actions.layout').toggle_preview,
@@ -171,20 +184,25 @@ return {
             -- define mappings, e.g.
             mappings = { -- extend mappings
               n = {
-                ['glld'] = function(prompt_bufnr)
-                  local picker = action_state.get_current_picker(prompt_bufnr)
-                  local prompt = picker:_get_prompt()
-                  picker:set_prompt(prompt .. ' -g "apps/ledger-live-desktop/src/**"')
+                ['<C-h>'] = function()
+                  local ripgrep_guide_url = 'https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md'
+                  vim.fn.jobstart('open ' .. ripgrep_guide_url, { detach = true })
                 end,
-                ['gllm'] = function(prompt_bufnr)
-                  local picker = action_state.get_current_picker(prompt_bufnr)
-                  local prompt = picker:_get_prompt()
-                  picker:set_prompt(prompt .. ' -g "apps/ledger-live-mobile/src/**"')
-                end,
+
                 ['gT'] = function(prompt_bufnr)
                   local picker = action_state.get_current_picker(prompt_bufnr)
                   local prompt = picker:_get_prompt()
                   picker:set_prompt(prompt .. ' -g "!*.{test,spec}.*"')
+                end,
+                ['glld'] = function(prompt_bufnr)
+                  local picker = action_state.get_current_picker(prompt_bufnr)
+                  local prompt = picker:_get_prompt()
+                  picker:set_prompt(prompt .. ' -g "apps/ledger-live-desktop/"')
+                end,
+                ['gllm'] = function(prompt_bufnr)
+                  local picker = action_state.get_current_picker(prompt_bufnr)
+                  local prompt = picker:_get_prompt()
+                  picker:set_prompt(prompt .. ' -g "apps/ledger-live-mobile/"')
                 end,
               },
               i = {
@@ -270,9 +288,46 @@ return {
 
       -- Quick to access keys:
       vim.keymap.set('n', '<leader>p', file_frecency, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader><leader>', function()
-        builtin.buffers { sort_mru = true }
-      end, { desc = '[ ] Find existing buffers' })
+
+      local open_other_buffers -- Forward declaration
+
+      local function open_term_buffers()
+        builtin.buffers {
+          sort_mru = true,
+          default_text = 'term://',
+          attach_mappings = function(prompt_bufnr, map)
+            local function new_term_and_close()
+              actions.close(prompt_bufnr)
+              vim.cmd 'terminal'
+            end
+            local function back_to_others()
+              actions.close(prompt_bufnr)
+              open_other_buffers()
+            end
+            map('n', 'a', new_term_and_close)
+            map('n', 't', back_to_others)
+            return true
+          end,
+        }
+      end
+
+      open_other_buffers = function()
+        builtin.buffers {
+          sort_mru = true,
+          file_ignore_patterns = { '^term://' },
+          attach_mappings = function(prompt_bufnr, map)
+            local function term_buffers()
+              actions.close(prompt_bufnr)
+              open_term_buffers()
+            end
+            map('n', 't', term_buffers)
+            return true
+          end,
+        }
+      end
+
+      vim.keymap.set('n', '<leader>,', open_term_buffers, { desc = 'Open [T]erminal Buffers' })
+      vim.keymap.set('n', '<leader><leader>', open_other_buffers, { desc = '[ ] Find existing buffers' })
 
       vim.keymap.set('n', '<leader>*', search_current_word, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>/', live_grep_args, { desc = '[S]earch by [G]rep' })

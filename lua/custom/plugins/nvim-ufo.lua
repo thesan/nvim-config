@@ -1,3 +1,5 @@
+-- Not UFO in the sky, but an ultra fold in Neovim.
+-- https://github.com/kevinhwang91/nvim-ufo
 return {
   'kevinhwang91/nvim-ufo',
   dependencies = { 'kevinhwang91/promise-async' },
@@ -19,31 +21,31 @@ return {
     -- Option 2: nvim lsp as LSP client
     -- Tell the server the capability of foldingRange,
     -- Neovim hasn't added foldingRange to default capabilities, users must add it manually
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities.textDocument.foldingRange = {
-      dynamicRegistration = false,
-      lineFoldingOnly = true,
-    }
-    local language_servers = vim.lsp.get_clients() -- or list servers manually like {'gopls', 'clangd'}
-    for _, ls in ipairs(language_servers) do
-      require('lspconfig')[ls].setup {
-        capabilities = capabilities,
-        -- you can add other fields for setting up lsp server in this table
-      }
-    end
-    require('ufo').setup()
+    -- local capabilities = vim.lsp.protocol.make_client_capabilities()
+    -- capabilities.textDocument.foldingRange = {
+    --   dynamicRegistration = false,
+    --   lineFoldingOnly = true,
+    -- }
+    -- local language_servers = vim.lsp.get_clients() -- or list servers manually like {'gopls', 'clangd'}
+    -- for _, ls in ipairs(language_servers) do
+    --   require('lspconfig')[ls].setup {
+    --     capabilities = capabilities,
+    --     -- you can add other fields for setting up lsp server in this table
+    --   }
+    -- end
+    -- require('ufo').setup()
     --
 
-    -- -- Option 3: treesitter as a main provider instead
-    -- -- (Note: the `nvim-treesitter` plugin is *not* needed.)
-    -- -- ufo uses the same query files for folding (queries/<lang>/folds.scm)
-    -- -- performance and stability are better than `foldmethod=nvim_treesitter#foldexpr()`
-    -- require('ufo').setup({
-    --     provider_selector = function(bufnr, filetype, buftype)
-    --         return {'treesitter', 'indent'}
-    --     end
-    -- })
-    -- --
+    -- Option 3: treesitter as a main provider instead
+    -- (Note: the `nvim-treesitter` plugin is *not* needed.)
+    -- ufo uses the same query files for folding (queries/<lang>/folds.scm)
+    -- performance and stability are better than `foldmethod=nvim_treesitter#foldexpr()`
+    require('ufo').setup {
+      provider_selector = function(bufnr, filetype, buftype)
+        return { 'treesitter', 'indent' }
+      end,
+    }
+    --
     --
     -- -- Option 4: disable all providers for all buffers
     -- -- Not recommend, AFAIK, the ufo's providers are the best performance in Neovim
@@ -53,13 +55,13 @@ return {
     --     end
     -- })
 
-    -- remember folds
-    vim.cmd [[
-      augroup remember_folds
-        autocmd!
-        autocmd BufWinLeave *.* mkview
-        autocmd BufWinEnter *.* silent! loadview
-      augroup END
-    ]]
+    -- remember folds WARNING this mess with the CWD
+    -- vim.cmd [[
+    --   augroup remember_folds
+    --     autocmd!
+    --     autocmd BufWinLeave *.* mkview
+    --     autocmd BufWinEnter *.* silent! loadview
+    --   augroup END
+    -- ]]
   end,
 }

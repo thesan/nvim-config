@@ -70,6 +70,7 @@ return {
         -- },
         -- pickers = {}
         pickers = {
+          lsp_references = { theme = 'ivy', previewer = true },
           find_files = { theme = 'ivy' },
           live_grep = { theme = 'ivy' },
           buffers = {

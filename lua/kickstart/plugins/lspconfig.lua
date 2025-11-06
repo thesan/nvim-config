@@ -80,14 +80,8 @@ return {
           -- or a suggestion from your LSP for this to activate.
           map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
 
-          local pick_references = function(options)
-            return function()
-              require('telescope.builtin').lsp_references(require('telescope.themes').get_ivy(options))
-            end
-          end
-
           -- Find references for the word under your cursor.
-          map('grr', pick_references { theme = 'ivy', previewer = true }, '[G]oto [R]eferences')
+          map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
@@ -155,34 +149,6 @@ return {
                 vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
               end,
             })
-
-            -- -- Format on save with eslint:
-            -- if client.name == 'eslint' then
-            --   enclient.server_capabilities.documentFormattingProvider = true
-            -- elseif client.name == 'ts_ls' then
-            --   client.server_capabilities.documentFormattingProvider = false
-            -- end
-            -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#eslint
-            local base_on_attach = vim.lsp.config.eslint.on_attach
-            vim.lsp.config('eslint', {
-              on_attach = function(client, bufnr)
-                if not base_on_attach then
-                  return
-                end
-
-                -- base_on_attach(client, bufnr)
-                -- vim.api.nvim_create_autocmd('BufWritePre', {
-                --   buffer = bufnr,
-                --   command = 'silent! LspEslintFixAll',
-                -- })
-              end,
-            })
-            -- Format on save with eslint:
-            -- (https://neovim.discourse.group/t/how-can-i-setup-eslint-to-format-on-save/2570/5)
-            -- vim.api.nvim_create_autocmd('BufWritePre', {
-            --   pattern = { '*.tsx', '*.ts', '*.jsx', '*.js' },
-            --   command = 'silent! EslintFixAll',
-            -- })
           end
 
           -- The following code creates a keymap to toggle inlay hints in your
@@ -196,37 +162,6 @@ return {
           end
         end,
       })
-
-      -- -- Format on save with eslint:
-      -- if client.name == 'eslint' then
-      --   enclient.server_capabilities.documentFormattingProvider = true
-      -- elseif client.name == 'ts_ls' then
-      --   client.server_capabilities.documentFormattingProvider = false
-      -- end
-      -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#eslint
-      local base_on_attach = vim.lsp.config.eslint.on_attach
-      vim.lsp.config('eslint', {
-        on_attach = function(client, bufnr)
-          if not base_on_attach then
-            print 'Error: No base on_attach function found for eslint'
-            return
-          end
-
-          -- print('LSP: eslint attached to buffer ' .. bufnr)
-          -- base_on_attach(client, bufnr)
-          -- vim.api.nvim_create_autocmd('BufWritePre', {
-          --   buffer = bufnr,
-          --   command = 'silent! LspEslintFixAll',
-          --   group = vim.api.nvim_create_augroup('LspEslintFormat', { clear = true }),
-          -- })
-        end,
-      })
-      -- Format on save with eslint:
-      -- (https://neovim.discourse.group/t/how-can-i-setup-eslint-to-format-on-save/2570/5)
-      -- vim.api.nvim_create_autocmd('BufWritePre', {
-      --   pattern = { '*.tsx', '*.ts', '*.jsx', '*.js' },
-      --   command = 'silent! EslintFixAll',
-      -- })
 
       -- Diagnostic Config
       -- See :help vim.diagnostic.Opts
@@ -283,59 +218,7 @@ return {
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {
-        --   enable = false, -- Disable ts_ls so that we can use other LSP for TypeScript
-        -- },
-        vtsls = {
-          -- explicitly add default filetypes, so that we can extend
-          -- them in related extras
-          filetypes = {
-            'javascript',
-            'javascriptreact',
-            'javascript.jsx',
-            'typescript',
-            'typescriptreact',
-            'typescript.tsx',
-          },
-          settings = {
-            typescript = {
-              tsserver = {
-                maxTsServerMemory = 8192,
-                nodePath = '/opt/homebrew/bin/node',
-              },
-              -- updateImportsOnFileMove = { enabled = 'always' },
-              -- suggest = {
-              --   completeFunctionCalls = true,
-              -- },
-              -- inlayHints = {
-              --   enumMemberValues = { enabled = true },
-              --   functionLikeReturnTypes = { enabled = true },
-              --   parameterNames = { enabled = 'literals' },
-              --   parameterTypes = { enabled = true },
-              --   propertyDeclarationTypes = { enabled = true },
-              --   variableTypes = { enabled = false },
-              -- },
-            },
-            -- complete_function_calls = true,
-            -- vtsls = {
-            --   enableMoveToFileCodeAction = true,
-            --   autoUseWorkspaceTsdk = true,
-            --   experimental = {
-            --     maxInlayHintLength = 30,
-            --     completion = {
-            --       enableServerSideFuzzyMatch = true,
-            --     },
-            --   },
-            -- },
-          },
-        },
-
-        eslint = {
-          -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#eslint
-          settings = {
-            codeActionOnSave = { enable = true },
-          },
-        },
+        -- ts_ls = {},
         --
 
         lua_ls = {
@@ -371,7 +254,6 @@ return {
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
       })
-
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {

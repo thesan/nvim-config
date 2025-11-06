@@ -30,7 +30,13 @@ return {
       local config = require 'CopilotChat.config'
       config.mappings.reset = false -- disable the reset mapping
 
-      require('CopilotChat').setup()
+      require('CopilotChat').setup {
+        sticky = {
+          '$claude-sonnet-4.5',
+          '#buffer',
+          '#gitdiff:staged',
+        },
+      }
     end,
   },
 }

@@ -54,9 +54,9 @@ return {
     vim.keymap.set('n', 'gD', function()
       local win = vim.api.nvim_get_current_win()
       vtsls.commands.goto_source_definition(win)
-    end, { desc = 'Goto Source Definition' })
+    end, { desc = 'TS: Goto Source Definition' })
 
-    vim.keymap.set('n', 'gR', vtsls.commands.file_references, { desc = 'File References' })
+    vim.keymap.set('n', 'gR', vtsls.commands.file_references, { desc = 'TS: File References' })
 
     vim.keymap.set('n', '<leader>zo', vtsls.commands.organize_imports, { desc = 'Organize Imports' })
 

@@ -307,6 +307,7 @@ return {
             end
             map('n', 'a', new_term_and_close)
             map('n', 't', back_to_others)
+            map('n', ';', back_to_others)
             return true
           end,
         }
@@ -322,6 +323,7 @@ return {
               open_term_buffers()
             end
             map('n', 't', term_buffers)
+            map('n', ';', term_buffers)
             return true
           end,
         }

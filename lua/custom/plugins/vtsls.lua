@@ -49,6 +49,23 @@ return {
             variableTypes = { enabled = false },
           },
         },
+        javascript = {
+          tsserver = {
+            maxTsServerMemory = 8192, -- Increase memory limit (e.g., 8GB)
+          },
+          updateImportsOnFileMove = { enabled = 'always' },
+          suggest = {
+            completeFunctionCalls = true,
+          },
+          inlayHints = {
+            enumMemberValues = { enabled = true },
+            functionLikeReturnTypes = { enabled = true },
+            parameterNames = { enabled = 'literals' },
+            parameterTypes = { enabled = true },
+            propertyDeclarationTypes = { enabled = true },
+            variableTypes = { enabled = false },
+          },
+        },
       },
     }
 

@@ -308,12 +308,13 @@ return {
             map('n', 'a', new_term_and_close)
             map('n', 't', back_to_others)
             map('n', ';', back_to_others)
+            map('n', ',', back_to_others)
             return true
           end,
         }
       end
 
-      open_other_buffers = function()
+      local open_other_buffers = function()
         builtin.buffers {
           sort_mru = true,
           file_ignore_patterns = { '^term://' },
@@ -324,13 +325,25 @@ return {
             end
             map('n', 't', term_buffers)
             map('n', ';', term_buffers)
+            map('n', ',', term_buffers)
             return true
           end,
         }
       end
 
-      vim.keymap.set('n', '<leader>,', open_term_buffers, { desc = 'Open [T]erminal Buffers' })
-      vim.keymap.set('n', '<leader><leader>', open_other_buffers, { desc = '[ ] Find existing buffers' })
+      local open_buffers_types = function(open_same_type)
+        return function()
+          local current_is_term = (vim.bo.buftype == 'terminal')
+          if current_is_term == open_same_type then
+            open_term_buffers()
+          else
+            open_other_buffers()
+          end
+        end
+      end
+
+      vim.keymap.set('n', '<leader>;', open_buffers_types(false), { desc = 'Open [T]erminal Buffers' })
+      vim.keymap.set('n', '<leader><leader>', open_buffers_types(true), { desc = '[ ] Find existing buffers' })
 
       vim.keymap.set('n', '<leader>*', search_current_word, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>/', live_grep_args, { desc = '[S]earch by [G]rep' })

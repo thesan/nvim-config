@@ -1,0 +1,7 @@
+vim.keymap.set('n', '<leader>cc', function()
+  vim.cmd 'terminal opencode -m github-copilot/gemini-3-flash-preview --agent="plan"'
+end, { desc = 'OpenCode quick question' })
+
+vim.keymap.set('n', '<leader>cp', function()
+  vim.cmd 'terminal opencode --agent="plan"'
+end, { desc = 'OpenCode plan' })

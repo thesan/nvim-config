@@ -7,7 +7,9 @@ return {
     local configs = require 'lspconfig.configs'
     configs.vtsls = vtsls.lspconfig -- set default server config, optional but recommended
 
+    local capabilities = require('blink.cmp').get_lsp_capabilities()
     require('lspconfig').vtsls.setup {
+      capabilities = capabilities,
       -- explicitly add default filetypes, so that we can extend
       -- them in related extras
       filetypes = {

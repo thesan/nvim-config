@@ -1,5 +1,5 @@
 require 'keymaps.toggleTerm'
-require 'keymaps.opencode'
+-- require 'keymaps.opencode'
 
 -- Terminal
 vim.keymap.set('t', '<C-[>', '<C-\\><C-n>', { silent = true })

@@ -11,6 +11,8 @@ local function goto_last_terminal()
     end
   end
 
+  vim.api.nvim_set_current_tabpage(1)
+
   -- Loop through stack starting from index 1 (most recent)
   for _, buf in ipairs(M.buffer_stack) do
     if vim.api.nvim_buf_is_valid(buf) and toggle(vim.bo[buf].buftype) then

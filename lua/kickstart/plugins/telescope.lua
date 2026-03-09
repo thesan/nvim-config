@@ -314,7 +314,7 @@ return {
         }
       end
 
-      local open_other_buffers = function()
+      open_other_buffers = function()
         builtin.buffers {
           sort_mru = true,
           file_ignore_patterns = { '^term://' },

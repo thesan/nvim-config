@@ -61,6 +61,8 @@ local function set_prose_wrap()
   vim.opt_local.wrap = is_prose
   vim.opt_local.linebreak = is_prose
   vim.opt_local.breakindent = is_prose
+  vim.opt_local.spell = is_prose
+  vim.opt_local.spelllang = { 'en' }
 end
 
 vim.api.nvim_create_autocmd({ 'BufEnter', 'FileType' }, {

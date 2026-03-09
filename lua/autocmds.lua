@@ -38,6 +38,38 @@ local function rename_term()
   end
 end
 
+local prose_filetypes = {
+  'asciidoc',
+  'gitcommit',
+  'markdown',
+  'mail',
+  'norg',
+  'org',
+  'plaintex',
+  'rst',
+  'tex',
+  'text',
+  'typst',
+}
+
+local function set_prose_wrap()
+  if vim.bo.buftype ~= '' then
+    return
+  end
+
+  local is_prose = vim.tbl_contains(prose_filetypes, vim.bo.filetype)
+  vim.opt_local.wrap = is_prose
+  vim.opt_local.linebreak = is_prose
+  vim.opt_local.breakindent = is_prose
+end
+
+vim.api.nvim_create_autocmd({ 'BufEnter', 'FileType' }, {
+  pattern = '*',
+  callback = function()
+    set_prose_wrap()
+  end,
+})
+
 vim.api.nvim_create_autocmd({ 'TermResponse', 'BufEnter', 'CursorHold' }, {
   callback = rename_term,
 })

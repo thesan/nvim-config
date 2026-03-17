@@ -57,7 +57,8 @@ local function set_prose_wrap()
     return
   end
 
-  local is_prose = vim.tbl_contains(prose_filetypes, vim.bo.filetype)
+  local is_empty_start_buffer = vim.bo.filetype == '' and vim.api.nvim_buf_get_name(0) == ''
+  local is_prose = vim.tbl_contains(prose_filetypes, vim.bo.filetype) or is_empty_start_buffer
   vim.opt_local.wrap = is_prose
   vim.opt_local.linebreak = is_prose
   vim.opt_local.breakindent = is_prose

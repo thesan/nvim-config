@@ -1,46 +1,40 @@
+--
+-- https://github.com/linrongbin16/gitlinker.nvim
+--
+local function preferred_remote()
+  local remotes = vim.fn.systemlist('git remote')
+  local has = {}
+  for _, r in ipairs(remotes) do
+    has[r] = true
+  end
+  if has['origin'] then return 'origin' end
+  if has['upstream'] then return 'upstream' end
+  return nil
+end
+
 return {
-  'ruifm/gitlinker.nvim',
-  dependencies = { 'nvim-lua/plenary.nvim' },
-  opts = {
-    remote = 'origin',
-    mappings = nil,
-  },
+  'linrongbin16/gitlinker.nvim',
+  opts = {},
   keys = {
     {
       'gh',
       function()
-        require('gitlinker').get_buf_range_url('n', {
-          action_callback = require('gitlinker.actions').open_in_browser,
+        require('gitlinker').link({
+          action = require('gitlinker.actions').system,
+          router_type = 'blame',
+          remote = preferred_remote(),
         })
       end,
-      desc = 'Open in GitHub',
-      mode = 'n',
-    },
-    {
-      'gh',
-      function()
-        require('gitlinker').get_buf_range_url('v', {
-          action_callback = require('gitlinker.actions').open_in_browser,
-        })
-      end,
-      desc = 'Open in GitHub',
-      mode = 'v',
+      desc = 'Open blame in GitHub',
+      mode = { 'n', 'v' },
     },
     {
       'gy',
       function()
-        require('gitlinker').get_buf_range_url 'n'
+        require('gitlinker').link({ remote = preferred_remote() })
       end,
       desc = 'Copy GitHub URL',
-      mode = 'n',
-    },
-    {
-      'gy',
-      function()
-        require('gitlinker').get_buf_range_url 'v'
-      end,
-      desc = 'Copy GitHub URL',
-      mode = 'v',
+      mode = { 'n', 'v' },
     },
   },
 }

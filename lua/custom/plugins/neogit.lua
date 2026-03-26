@@ -109,5 +109,13 @@ return {
       neogit.open { 'commit' }
     end, { desc = 'Neo[G]it [C]ommit' })
     vim.keymap.set('n', '<Leader>gs', diffview.open, { desc = '[G]it [S]tatus' })
+    vim.keymap.set('n', '<Leader>gb', function()
+      local line = vim.fn.line '.'
+      vim.cmd(line .. ',' .. line .. 'DiffviewFileHistory')
+      vim.defer_fn(function()
+        vim.cmd 'wincmd k'
+        vim.cmd 'wincmd l'
+      end, 200)
+    end, { desc = '[G]it [B]lame' })
   end,
 }

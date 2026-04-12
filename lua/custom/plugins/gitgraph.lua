@@ -55,32 +55,40 @@ return {
   },
   keys = {
     {
-      '<leader>gl',
+      '<leader>gL',
       function()
-        require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = 'HEAD' })
-      end,
-      desc = 'GitGraph - Draw',
-    },
-    {
-      '<leader>gLa',
-      function()
-        require('gitgraph').draw({}, { all = true, max_count = 400 })
-      end,
-      desc = 'GitGraph - Draw',
-    },
-    {
-      '<leader>gLl',
-      function()
+        -- require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = 'HEAD' })
         require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = 'HEAD --first-parent' })
       end,
       desc = 'GitGraph - Draw',
     },
     {
-      '<leader>gLr',
+      '<leader>gl',
       function()
-        require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = '--all --reflog' })
+        require('gitgraph').draw({}, { all = true, max_count = 400, revision_range = 'HEAD --first-parent' })
       end,
-      desc = 'With reflog',
+      desc = 'GitGraph - Draw',
     },
+    -- {
+    --   '<leader>gLa',
+    --   function()
+    --     require('gitgraph').draw({}, { all = true, max_count = 400 })
+    --   end,
+    --   desc = 'GitGraph - Draw',
+    -- },
+    -- {
+    --   '<leader>gLl',
+    --   function()
+    --     require('gitgraph').draw({}, { all = true, max_count = 400, revision_range = 'HEAD --first-parent' })
+    --   end,
+    --   desc = 'GitGraph - Draw',
+    -- },
+    -- {
+    --   '<leader>gLr',
+    --   function()
+    --     require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = '--all --reflog' })
+    --   end,
+    --   desc = 'With reflog',
+    -- },
   },
 }

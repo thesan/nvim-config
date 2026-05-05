@@ -65,7 +65,7 @@ return {
     {
       '<leader>gl',
       function()
-        require('gitgraph').draw({}, { all = true, max_count = 400, revision_range = 'HEAD --first-parent' })
+        require('gitgraph').draw({}, { all = true, max_count = 4000, revision_range = 'HEAD --first-parent' })
       end,
       desc = 'GitGraph - Draw',
     },
@@ -83,12 +83,12 @@ return {
     --   end,
     --   desc = 'GitGraph - Draw',
     -- },
-    -- {
-    --   '<leader>gLr',
-    --   function()
-    --     require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = '--all --reflog' })
-    --   end,
-    --   desc = 'With reflog',
-    -- },
+    {
+      '<leader>gR',
+      function()
+        require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = '--all --first-parent --reflog' })
+      end,
+      desc = 'With reflog',
+    },
   },
 }

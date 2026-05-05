@@ -174,6 +174,10 @@ return {
 
           live_grep_args = {
             auto_quoting = true, -- enable/disable auto-quoting
+            -- Search dotfiles like CI configs without turning off ignore rules.
+            additional_args = function()
+              return { '--hidden' }
+            end,
 
             previewer = true,
 

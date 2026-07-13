@@ -40,15 +40,47 @@ return {
       vim.cmd 'tabclose' -- Close the diffview tab
     end
 
-    local set_1col_layout = function()
-      -- Go to the first split (the leftmost one)
-      vim.cmd 'wincmd h'
-      vim.cmd 'wincmd h'
+    local toggle_diff1_layout = function()
+      local diffview_lib = require 'diffview.lib'
+      local DiffView = require('diffview.scene.views.diff.diff_view').DiffView
+      local Diff1 = require('diffview.scene.layouts.diff_1').Diff1
 
-      vim.cmd 'wincmd l' -- Go to the second split
-      vim.cmd 'vertical resize 7' -- Set its width to few characters
+      local view = diffview_lib.get_current_view()
+      if not view or not view:instanceof(DiffView) or not view.cur_entry then
+        return
+      end
 
-      vim.cmd 'wincmd l' -- Go to the last split
+      if view.cur_entry.kind == 'conflicting' then
+        actions.cycle_layout()
+        return
+      end
+
+      local target_layout = view.cur_layout:instanceof(Diff1) and DiffView.get_default_layout() or Diff1
+      local cur_file = view.cur_entry
+      local main = view.cur_layout:get_main_win()
+      local ok, pos = pcall(vim.api.nvim_win_get_cursor, main.id)
+      local was_focused = view.cur_layout:is_focused()
+
+      for _, entry in ipairs(view.panel:ordered_file_list()) do
+        if entry.kind ~= 'conflicting' then
+          entry:convert_layout(target_layout)
+        end
+      end
+
+      cur_file.layout.emitter:once('files_opened', function()
+        main = view.cur_layout:get_main_win()
+        if ok then
+          pcall(vim.api.nvim_win_set_cursor, main.id, pos)
+        end
+
+        if was_focused then
+          main:focus()
+        else
+          view.cur_layout:sync_scroll()
+        end
+      end)
+
+      view:set_file(cur_file, false)
     end
 
     local reset_layout = function()
@@ -82,7 +114,7 @@ return {
           ['<C-n>'] = actions.select_next_entry, -- Move to the next file in the diff view
           ['<C-p>'] = actions.select_prev_entry, -- Move to the previous file in the diff view
           -- ['gf'] = goto_file_edit,
-          ['<C-a>'] = set_1col_layout,
+          ['<C-a>'] = toggle_diff1_layout,
           ['<C-s>'] = reset_layout,
           ['<C-r>'] = 'RefreshBuffer',
         },
@@ -95,7 +127,7 @@ return {
           ['<C-n>'] = actions.select_next_entry, -- Move to the next file in the diff view
           ['<C-p>'] = actions.select_prev_entry, -- Move to the previous file in the diff view
           -- ['gf'] = goto_file_edit,
-          ['<C-a>'] = set_1col_layout,
+          ['<C-a>'] = toggle_diff1_layout,
           ['<C-s>'] = reset_layout,
         },
       },

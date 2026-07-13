@@ -27,7 +27,7 @@ return {
   event = 'BufReadPost',
   config = function()
     require('copilot').setup {
-      copilot_node_command = vim.fn.expand '$NODE_PATH',
+      -- copilot_node_command = vim.fn.expand '$NODE_PATH',
       suggestion = {
         enabled = not vim.g.ai_cmp,
         auto_trigger = true,

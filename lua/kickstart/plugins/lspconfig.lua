@@ -221,6 +221,8 @@ return {
         -- ts_ls = {},
         --
 
+        tsgo = {},
+
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -268,7 +270,6 @@ return {
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
-          ['vtsls'] = function() end, -- Handled in lua/custom/plugins/vtsls.lua
         },
       }
     end,

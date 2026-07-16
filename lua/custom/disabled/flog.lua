@@ -81,8 +81,8 @@ return {
       callback = function()
         vim.keymap.set('n', '<CR>', function()
           local hash = vim.fn['flog#Format'] '%h'
-          vim.cmd('DiffviewOpen ' .. hash .. '^!')
-        end, { buffer = true, desc = 'Open commit in Diffview' })
+          require('custom.integrations.codediff').open_commit(hash)
+        end, { buffer = true, desc = 'Open commit in CodeDiff' })
       end,
     })
   end,

@@ -82,6 +82,26 @@ local function setup_hunk_navigation_workaround()
   wrap_hunk_navigation('prev_hunk', 'prev_file', 'last')
 end
 
+local function setup_tsgo_semantic_tokens_workaround()
+  -- CodeDiff sends virtual buffers to an attached LSP for semantic tokens.
+  -- Its unnamed inline buffers have the URI "file://", which crashes tsgo
+  -- while it tries to resolve a relative tsconfig.json.
+  local semantic = require 'codediff.ui.semantic_tokens'
+  if semantic._tsgo_guard then
+    return
+  end
+  semantic._tsgo_guard = true
+
+  local apply_semantic_tokens = semantic.apply_semantic_tokens
+  semantic.apply_semantic_tokens = function(left_buf, right_buf)
+    if #vim.lsp.get_clients { bufnr = right_buf, name = 'tsgo' } > 0 then
+      return false
+    end
+
+    return apply_semantic_tokens(left_buf, right_buf)
+  end
+end
+
 return {
   'esmuellert/codediff.nvim',
   cmd = 'CodeDiff',
@@ -104,6 +124,7 @@ return {
   },
   config = function(_, opts)
     require('codediff').setup(opts)
+    setup_tsgo_semantic_tokens_workaround()
     setup_raw_conflict_workaround()
     setup_hunk_navigation_workaround()
   end,

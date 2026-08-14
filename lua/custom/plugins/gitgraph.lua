@@ -53,19 +53,27 @@ return {
   },
   keys = {
     {
+      '<leader>gh',
+      function()
+        -- require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = 'HEAD' })
+        require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = 'HEAD --first-parent' })
+      end,
+      desc = 'GitGraph - Current Branch history',
+    },
+    {
       '<leader>gL',
       function()
         -- require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = 'HEAD' })
         require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = 'HEAD --first-parent' })
       end,
-      desc = 'GitGraph - Draw',
+      desc = 'GitGraph - Current Branch history',
     },
     {
       '<leader>gl',
       function()
         require('gitgraph').draw({}, { all = true, max_count = 4000, revision_range = 'HEAD --first-parent' })
       end,
-      desc = 'GitGraph - Draw',
+      desc = 'GitGraph - Full graph',
     },
     -- {
     --   '<leader>gLa',
@@ -86,7 +94,7 @@ return {
       function()
         require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = '--all --first-parent --reflog' })
       end,
-      desc = 'With reflog',
+      desc = 'GitGraph - With reflog',
     },
   },
 }

@@ -14,9 +14,12 @@ local function setup_raw_conflict_workaround()
 
   view.update = function(tabpage, session_config, ...)
     if session_config and session_config.conflict then
-      local path = vim.fs.joinpath(session_config.git_root, session_config.modified_path)
-      require('codediff.ui.view.inline_view').show_single_file(tabpage, path, { side = 'modified' })
-      return true
+      local modified = session_config.modified
+      local path = modified and modified.absolute
+      if path and path ~= '' and vim.fn.filereadable(path) == 1 then
+        require('codediff.ui.view.inline_view').show_single_file(tabpage, path, { side = 'modified' })
+        return true
+      end
     end
 
     return update(tabpage, session_config, ...)

@@ -51,6 +51,20 @@ return {
       end,
     },
   },
+
+  cmd = 'GitGraph',
+  config = function(_, opts)
+    require('gitgraph').setup(opts)
+
+    vim.api.nvim_create_user_command('GitGraph', function(command)
+      require('gitgraph').draw({}, {
+        all = false,
+        max_count = 4000,
+        revision_range = command.args ~= '' and command.args or 'HEAD --first-parent',
+      })
+    end, { nargs = '*' })
+  end,
+
   keys = {
     {
       '<leader>gh',

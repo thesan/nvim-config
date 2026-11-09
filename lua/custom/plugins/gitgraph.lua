@@ -1,6 +1,7 @@
 --
 -- https://github.com/isakbm/gitgraph.nvim
 --
+
 return {
   'isakbm/gitgraph.nvim',
   dir = '~/Projects/devenv/gitgraph.nvim',
@@ -73,6 +74,24 @@ return {
         require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = 'HEAD --first-parent' })
       end,
       desc = 'GitGraph - Current Branch history',
+    },
+    {
+      '<leader>gF',
+      function()
+        local path = vim.api.nvim_buf_get_name(0)
+        if path == '' then
+          vim.notify('GitGraph: current buffer has no file path', vim.log.levels.WARN)
+          return
+        end
+
+        require('gitgraph').draw({}, {
+          all = false,
+          max_count = 4000,
+          revision_range = 'HEAD',
+          paths = { path },
+        })
+      end,
+      desc = 'GitGraph - Current file history',
     },
     {
       '<leader>gL',

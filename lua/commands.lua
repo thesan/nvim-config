@@ -1,4 +1,5 @@
 vim.api.nvim_create_user_command('CopyRelPath', "call setreg('+', expand('%:.'))", {})
+vim.api.nvim_create_user_command('CopyAbsPath', "call setreg('+', expand('%:p'))", {})
 vim.api.nvim_create_user_command('CopyHomePath', "call setreg('+', expand('%:p:~'))", {})
 vim.api.nvim_create_user_command('W', 'write', {})
 

@@ -2,6 +2,11 @@
 -- https://github.com/isakbm/gitgraph.nvim
 --
 
+-- Hide T3 Code checkpoint commits (stored under refs/t3/*) from graphs that
+-- walk every ref. `--exclude` only applies to the `--all`/`--branches`/... that
+-- follows it, so it has to come first.
+local ALL_REFS = "--exclude='refs/t3/*' --all"
+
 return {
   'isakbm/gitgraph.nvim',
   dir = '~/Projects/devenv/gitgraph.nvim',
@@ -104,7 +109,7 @@ return {
     {
       '<leader>gl',
       function()
-        require('gitgraph').draw({}, { all = true, max_count = 4000, revision_range = 'HEAD --first-parent' })
+        require('gitgraph').draw({}, { all = false, max_count = 4000, revision_range = ALL_REFS .. ' HEAD --first-parent' })
       end,
       desc = 'GitGraph - Full graph',
     },
@@ -125,7 +130,7 @@ return {
     {
       '<leader>gR',
       function()
-        require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = '--all --first-parent --reflog' })
+        require('gitgraph').draw({}, { all = false, max_count = 400, revision_range = ALL_REFS .. ' --first-parent --reflog' })
       end,
       desc = 'GitGraph - With reflog',
     },
